@@ -1,0 +1,16 @@
+SHIBA standing/present pose — prompt template
+Adapt "standing" to SHIBA's actual form — this may be "hovering," "present," "manifested," etc.
+Fill in after dossier is complete.
+
+TEMPLATE STRUCTURE:
+[SHIBA_IDENTITY], [FORM_STATE], [ENVIRONMENT_BRIEF], [MOOD_FRAGMENT], [QUALITY_BLOCK]
+
+INSTRUCTIONS:
+1. Pull SHIBA_IDENTITY from dossier.md → PROMPT FRAGMENT
+2. Define SHIBA's form state — how is it manifesting in this shot?
+3. Add minimal environmental anchor — enough to ground the shot
+4. Add mood fragment from state card → DEFAULT MOOD
+5. Consider: is SHIBA alone in this shot, or in relation to James?
+
+ASSEMBLED PROMPT (fill in after dossier is complete):
+[FILL IN]

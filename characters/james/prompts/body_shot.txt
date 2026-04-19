@@ -1,0 +1,15 @@
+James body shot — prompt template
+Three-quarter or waist-up framing. Fill in after dossier is complete.
+
+TEMPLATE STRUCTURE:
+[CHARACTER_IDENTITY], three-quarter body shot, [POSTURE_DETAIL], [ENVIRONMENT_BRIEF], [MOOD_FRAGMENT], [QUALITY_BLOCK]
+
+INSTRUCTIONS:
+1. Pull CHARACTER_IDENTITY from dossier.md → PROMPT FRAGMENT section
+2. Specify framing: "three-quarter body shot" or "waist-up shot"
+3. Add posture detail appropriate for closer framing (facial expression carries more weight here)
+4. Brief environmental suggestion only — keep focus on character read
+5. Add mood fragment from state card → DEFAULT MOOD
+
+ASSEMBLED PROMPT (fill in after dossier is complete):
+[FILL IN — paste your finalized body shot prompt here after first test]

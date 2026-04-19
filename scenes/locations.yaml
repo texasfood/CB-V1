@@ -1,0 +1,40 @@
+# Cyan Black — Location Library
+#
+# Every location that appears in stills must be defined here first.
+# The scene builder resolves location IDs to prompt fragments.
+#
+# Format per entry:
+#   id:               unique identifier, used in scene cards (no spaces, lowercase)
+#   name:             human-readable name
+#   description:      what this place is and its role in the story
+#   visual_cues:      key visual identifiers — what makes this location instantly recognizable
+#   timeline:         a | b | both
+#   lighting_default: which preset from lighting_library.yaml is the default
+#   mood_default:     default mood if scene card doesn't override
+#   prompt_fragment:  the MidJourney-ready text for this location (fill in after testing)
+#   notes:            any special instructions for prompting this location
+
+locations:
+  - id: placeholder_location_01
+    name: "[LOCATION NAME]"
+    description: "[What is this place? What happens here? Why does it matter to the story?]"
+    visual_cues: "[Key visual identifiers — what makes this location instantly recognizable in a still?]"
+    timeline: "both"
+    lighting_default: "dramatic"
+    mood_default: "tension"
+    prompt_fragment: "[FILL IN — MidJourney-ready location text, e.g. 'abandoned industrial corridor, exposed pipes, concrete walls, flickering fluorescent light']"
+    notes: "[Any special instructions for prompting this location]"
+
+  - id: placeholder_location_02
+    name: "[LOCATION NAME]"
+    description: "[FILL IN]"
+    visual_cues: "[FILL IN]"
+    timeline: "a"
+    lighting_default: "low_key"
+    mood_default: "isolation"
+    prompt_fragment: "[FILL IN]"
+    notes: "[FILL IN or remove notes field if none]"
+
+# Add new locations following the format above.
+# Always define a location here before referencing it in a scene card.
+# Test the prompt_fragment in isolation before relying on it in scene builds.

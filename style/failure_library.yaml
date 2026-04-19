@@ -1,0 +1,27 @@
+# Cyan Black — Failure Library
+#
+# Prompt patterns that produced unusable results.
+# Populated during review sessions. Never delete entries — set archived: true instead.
+# Review engine adds failures automatically when a prompt scores < 5.0.
+#
+# Format for each entry:
+#   - pattern: "the exact fragment or phrase that failed"
+#     reason: "why it failed — be specific"
+#     category: "color | character | lighting | composition | mood | style"
+#     context: "what type of prompt it appeared in"
+#     date: "YYYY-MM-DD"
+#     archived: false
+
+failures:
+  - pattern: "[EXAMPLE — replace with real failures as they occur]"
+    reason: "Placeholder example entry — replace after first review session"
+    category: "style"
+    context: "character standing pose"
+    date: "2024-01-01"
+    archived: true
+
+# How to add a new failure:
+# 1. Run `python codex.py review [prompt_id]` after testing a bad output
+# 2. Identify which specific fragment caused the problem
+# 3. Add an entry here manually with pattern, reason, category, context, and today's date
+# 4. Also note it in style/visual_dna.md under "Failed Prompt Language"

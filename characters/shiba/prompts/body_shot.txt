@@ -1,0 +1,15 @@
+SHIBA body/close shot — prompt template
+Closer framing of SHIBA's form. Adapt for SHIBA's actual visual nature.
+Fill in after dossier is complete.
+
+TEMPLATE STRUCTURE:
+[SHIBA_IDENTITY], close shot, [FORM_DETAIL], [LIGHT_BEHAVIOR_DETAIL], [MOOD_FRAGMENT], [QUALITY_BLOCK]
+
+INSTRUCTIONS:
+1. Pull SHIBA_IDENTITY from dossier.md → PROMPT FRAGMENT
+2. In close framing, emphasize SHIBA's defining visual element (from dossier)
+3. Light behavior becomes more prominent at close range — describe it
+4. Add mood fragment from state card
+
+ASSEMBLED PROMPT (fill in after dossier is complete):
+[FILL IN]

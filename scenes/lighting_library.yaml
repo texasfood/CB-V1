@@ -1,0 +1,46 @@
+# Cyan Black — Lighting Library
+#
+# Named lighting presets for use in scene cards and prompt assembly.
+# Reference a preset by its key in scene cards under the LIGHTING section.
+# The scene builder resolves the key to the prompt_fragment.
+
+presets:
+
+  dramatic:
+    label: "Dramatic Single-Source"
+    description: "Hard single light source, deep shadow, high contrast. Default Cyan Black lighting."
+    prompt_fragment: "dramatic single-source lighting, deep shadow pools, high contrast, motivated light"
+
+  neon_ambient:
+    label: "Neon Ambient"
+    description: "Diffuse neon environmental light, colored shadows, urban glow."
+    prompt_fragment: "neon-ambient light wash, colored shadow fill, urban environmental glow"
+
+  practical:
+    label: "Practical Motivated"
+    description: "Light originates from a visible source within the scene."
+    prompt_fragment: "practical-source motivated lighting, realistic light falloff, source visible in frame"
+
+  rim:
+    label: "Rim Light Hero"
+    description: "Strong rim light separates subject from dark background."
+    prompt_fragment: "strong rim light, subject separated from dark background, edge halo, deep shadow on face"
+
+  low_key:
+    label: "Low Key"
+    description: "Predominantly dark with selective, minimal illumination."
+    prompt_fragment: "low-key lighting, predominantly dark, selective illumination, 90% shadow coverage"
+
+  overcast:
+    label: "Overcast Natural"
+    description: "Flat, diffuse daylight. No harsh shadows."
+    prompt_fragment: "overcast diffuse natural light, flat soft exposure, no harsh shadows"
+
+  two_source:
+    label: "Two-Source Dramatic"
+    description: "Primary hard source plus colored fill or rim from opposing angle."
+    prompt_fragment: "two-source lighting, hard key light, opposing colored fill, dramatic separation"
+
+# Add new presets following the format above.
+# Each preset must have: label, description, prompt_fragment
+# Test prompt_fragment in a scene before adding to library as confirmed.

@@ -1,0 +1,74 @@
+# Cyan Black — Prompt Building Blocks
+#
+# These are reusable, tested fragments assembled into every prompt.
+# Rules:
+#   - Only add blocks that have been validated by a scored, approved output.
+#   - The first item in each list is the default used by the engine.
+#   - Keep each fragment concise — it becomes part of a comma-separated prompt chain.
+#   - Never delete a block that has produced approved outputs. Archive instead.
+
+# ── Quality block ────────────────────────────────────────────────────────────
+# Appended to every prompt. First item is the engine default.
+base_quality:
+  - "ultra-detailed, high fidelity production art"
+  - "masterwork illustration, professional rendering"
+
+# ── Style core ───────────────────────────────────────────────────────────────
+# Core compositional and stylistic direction.
+style_core:
+  - "cinematic composition, dramatic framing, still photography"
+
+# ── MidJourney technical flags ───────────────────────────────────────────────
+# Appended to every prompt after the content body.
+mj_flags:
+  default: "--v 6.1 --q 2"
+  high_detail: "--v 6.1 --q 2 --s 750"
+  fast_test: "--v 6.1 --q 1"
+
+# ── Aspect ratios ────────────────────────────────────────────────────────────
+aspect_ratios:
+  portrait: "--ar 2:3"
+  landscape: "--ar 16:9"
+  square: "--ar 1:1"
+  widescreen: "--ar 21:9"
+
+# ── Lighting blocks ──────────────────────────────────────────────────────────
+# Reference via scenes/lighting_library.yaml for scene assembly.
+# These are prompt-ready fragments for inline use.
+lighting:
+  dramatic: "dramatic single-source lighting, deep shadow pools, high contrast"
+  neon_ambient: "neon-ambient light wash, colored shadows, urban glow"
+  practical: "practical-source motivated lighting, realistic light falloff"
+  rim: "strong rim light, subject separated from dark background"
+  low_key: "low-key lighting, predominantly dark, selective illumination"
+  overcast: "overcast diffuse natural light, soft even exposure"
+
+# ── Mood blocks ──────────────────────────────────────────────────────────────
+# Used by --mood flag override or extracted from state cards.
+moods:
+  tension: "high-tension atmosphere, weighted silence"
+  contemplative: "introspective quiet, still air, inner weight"
+  action: "kinetic energy, motion implied in stillness"
+  grief: "heavy emotional weight, stillness of grief"
+  resolve: "determined stillness, quiet resolve, controlled"
+  dread: "creeping unease, wrong silence, environmental threat"
+  isolation: "profound alone, vast space, small figure"
+
+# ── Negative prompt blocks ───────────────────────────────────────────────────
+# Append with --no when needed.
+negative:
+  standard: "blurry, low quality, watermark, signature, jpeg artifacts, noise"
+  character_drift: "wrong costume, wrong hair, inconsistent ethnicity, wrong age"
+  style_drift: "bright colors, cheerful, cartoon, anime, painted illustration, fantasy"
+
+# ── PROJECT-SPECIFIC BLOCKS ──────────────────────────────────────────────────
+# Add your Cyan Black-specific approved blocks below.
+# Fill in after your first approved outputs.
+#
+# Format:
+#   block_name:
+#     - "prompt fragment text here"
+#
+# Example:
+#   cyan_black_world:
+#     - "[your world's visual signature fragment]"

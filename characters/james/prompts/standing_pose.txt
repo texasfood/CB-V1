@@ -1,0 +1,15 @@
+James standing pose — prompt template
+Fill this in from the dossier PROMPT FRAGMENT section after dossier is complete.
+
+TEMPLATE STRUCTURE:
+[CHARACTER_IDENTITY], standing, [POSTURE_DETAIL], [ENVIRONMENT_BRIEF], [MOOD_FRAGMENT], [QUALITY_BLOCK]
+
+INSTRUCTIONS:
+1. Pull CHARACTER_IDENTITY from dossier.md → PROMPT FRAGMENT section
+2. Add standing posture detail from dossier → POSTURE AND MOVEMENT section
+3. Add a brief environmental anchor (do not describe full scene — that's for scene cards)
+4. Add mood fragment from the relevant state card → DEFAULT MOOD section
+5. The quality block and MJ flags are appended automatically by the engine
+
+ASSEMBLED PROMPT (fill in after dossier is complete):
+[FILL IN — paste your finalized standing pose prompt here after first test]
