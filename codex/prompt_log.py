@@ -1,12 +1,17 @@
 """Prompt log — JSON-based storage for all prompt assemblies and review results."""
 
 import json
+import os
 import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-LOG_PATH = Path(__file__).parent.parent / 'outputs' / 'prompt_log.json'
+_data_dir = os.environ.get('CODEX_DATA_DIR')
+if _data_dir:
+    LOG_PATH = Path(_data_dir) / 'prompt_log.json'
+else:
+    LOG_PATH = Path(__file__).parent.parent / 'outputs' / 'prompt_log.json'
 
 
 class PromptLog:

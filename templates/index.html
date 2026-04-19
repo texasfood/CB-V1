@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<h1>Cyan Black Codex</h1>
+
+{% if warnings %}
+<div class="alert alert-warn">
+  <div class="alert-label">⚠ Canon warnings — fill in these files before generating</div>
+  <ul>
+    {% for w in warnings %}<li>{{ w }}</li>{% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<div class="status-grid">
+  <div class="status-item">
+    <div class="status-num">{{ characters|length }}</div>
+    <div class="status-label">Characters</div>
+    <div class="status-detail">{{ characters|join(', ') or '—' }}</div>
+  </div>
+  <div class="status-item">
+    <div class="status-num">{{ location_count }}</div>
+    <div class="status-label">Locations</div>
+  </div>
+  <div class="status-item">
+    <div class="status-num">{{ total_prompts }}</div>
+    <div class="status-label">Prompts generated</div>
+  </div>
+  <div class="status-item">
+    <div class="status-num {{ 'cyan' if approved_prompts > 0 }}">{{ approved_prompts }}</div>
+    <div class="status-label">Approved</div>
+  </div>
+  <div class="status-item">
+    <div class="status-num {{ 'red' if failure_count > 0 }}">{{ failure_count }}</div>
+    <div class="status-label">Failure patterns</div>
+  </div>
+</div>
+
+<div class="quick-actions">
+  <a href="/character" class="btn">Generate Character Prompt</a>
+  <a href="/scene" class="btn btn-ghost">Build Scene Prompt</a>
+</div>
+
+{% if recent %}
+<div class="section">
+  <h2>Recent</h2>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Type</th><th>Subject</th><th>Score</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      {% for e in recent|reverse %}
+      <tr>
+        <td class="mono muted">{{ e.id }}</td>
+        <td>{{ e.type }}</td>
+        <td>{{ e.character or e.scene_id or '—' }}</td>
+        <td>
+          {% if e.review %}
+            {{ '%.1f'|format(e.review.overall) }}
+          {% else %}—{% endif %}
+        </td>
+        <td>
+          {% if e.approved %}<span class="badge badge-approved">approved</span>
+          {% elif e.rejected %}<span class="badge badge-rejected">rejected</span>
+          {% else %}<span class="badge badge-pending">unreviewed</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="tbl-footer"><a href="/log">View full log →</a></div>
+</div>
+{% endif %}
+
+{% endblock %}

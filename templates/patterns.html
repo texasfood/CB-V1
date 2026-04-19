@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Patterns{% endblock %}
+{% block content %}
+
+<h1>Pattern Library</h1>
+
+<div class="section">
+  <h2>Successful — fragments from approved outputs (score ≥ 8)</h2>
+
+  {% if successful %}
+  <table>
+    <thead>
+      <tr><th>Fragment</th><th>Category</th><th>Score</th><th>Prompt ID</th></tr>
+    </thead>
+    <tbody>
+      {% for p in successful %}
+      <tr>
+        <td class="mono">{{ p.fragment }}…</td>
+        <td class="muted">{{ p.category }}</td>
+        <td class="{{ 'score-good' }}">{{ '%.1f'|format(p.score) }}</td>
+        <td class="mono muted small">{{ p.prompt_id }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    No approved patterns yet. Review outputs and approve the good ones to build this library.
+  </div>
+  {% endif %}
+</div>
+
+<div class="section">
+  <h2>Failed — active failure patterns</h2>
+
+  {% if failed %}
+  <table>
+    <thead>
+      <tr><th>Pattern</th><th>Category</th><th>Reason</th></tr>
+    </thead>
+    <tbody>
+      {% for f in failed %}
+      <tr>
+        <td class="mono">{{ f.pattern }}</td>
+        <td class="muted">{{ f.category }}</td>
+        <td>{{ f.reason }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    No active failure patterns. Add them to <code>style/failure_library.yaml</code> when you find them.
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Scene{% endblock %}
+{% block content %}
+
+<h1>Scene Prompt</h1>
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+{% if not scene_ids %}
+<div class="alert alert-warn">
+  No scene cards found in <code>scenes/cards/</code>. Add a <code>.md</code> file there first.
+</div>
+{% endif %}
+
+<form method="post" class="card">
+  <div class="form-grid">
+
+    <div class="field">
+      <label>Scene</label>
+      <select name="scene_id" required>
+        <option value="">— select —</option>
+        {% for s in scene_ids %}
+        <option value="{{ s }}" {% if form_data.get('scene_id') == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Timeline</label>
+      <select name="timeline">
+        {% for t in timelines %}
+        <option value="{{ t }}" {% if form_data.get('timeline', 'a') == t %}selected{% endif %}>Timeline {{ t|upper }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Format</label>
+      <select name="format">
+        {% for f in formats %}
+        <option value="{{ f }}" {% if form_data.get('format', 'landscape') == f %}selected{% endif %}>{{ f }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+  </div>
+  <button type="submit" class="btn">Build Scene Prompt</button>
+</form>
+
+{% if result %}
+<div class="result card">
+  <div class="result-header">
+    <h2>Prompt</h2>
+    <div class="result-meta mono muted">ID: {{ result.id }}</div>
+  </div>
+
+  <div class="prompt-box" id="prompt-out">{{ result.prompt }}</div>
+
+  <div class="result-actions">
+    <button class="btn" id="prompt-out-btn" onclick="copyPrompt('prompt-out')">Copy Prompt</button>
+    <a href="/review/{{ result.id }}" class="btn btn-ghost">Score this output</a>
+  </div>
+
+  <details class="sources">
+    <summary>Source layers</summary>
+    <div class="source-table">
+      {% for k, v in result.sources.items() %}
+      {% if v %}
+      <div class="source-row">
+        <span class="source-key">{{ k }}</span>
+        <span class="source-val">{{ v }}</span>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </details>
+</div>
+{% endif %}
+
+{% endblock %}

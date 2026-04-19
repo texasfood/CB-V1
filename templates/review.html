@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Review{% endblock %}
+{% block content %}
+
+<h1>Score Output</h1>
+
+<div class="card review-prompt-card">
+  <div class="result-meta mono muted" style="margin-bottom:8px">ID: {{ entry.id }}</div>
+  <div class="prompt-box" id="prompt-out">{{ entry.prompt }}</div>
+  <div style="margin-top:8px">
+    <button class="btn btn-ghost btn-sm" id="prompt-out-btn" onclick="copyPrompt('prompt-out')">Copy Prompt</button>
+  </div>
+</div>
+
+{% if entry.review %}
+<div class="alert alert-info">
+  Already reviewed — current score: <strong>{{ '%.1f'|format(entry.review.overall) }}/10</strong>.
+  Submitting this form will overwrite the existing review.
+</div>
+{% endif %}
+
+<form method="post" class="card">
+  <h2>Rubric</h2>
+
+  {% for key, r in rubric.items() %}
+  <div class="score-row">
+    <div class="score-label">
+      <strong>{{ r.label }}</strong>
+      <span>{{ r.description }}</span>
+      <span class="muted small">weight: {{ (r.weight * 100)|int }}%</span>
+    </div>
+    <div class="score-inputs">
+      <input
+        type="number"
+        name="{{ key }}"
+        min="0" max="10" step="0.5"
+        class="score-input"
+        placeholder="0–10"
+        value="{{ entry.review.dimensions[key] if entry.review and entry.review.dimensions.get(key) is not none else '' }}"
+      >
+      <input
+        type="text"
+        name="{{ key }}_note"
+        class="note-input"
+        placeholder="note (optional)"
+        value="{{ entry.review.notes.get(key, '') if entry.review and entry.review.notes else '' }}"
+      >
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="review-actions">
+    <button type="submit" class="btn">Submit Review</button>
+    <a href="/log" class="btn btn-ghost">Cancel</a>
+  </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Log{% endblock %}
+{% block content %}
+
+<h1>Prompt Log</h1>
+
+<div class="filter-bar">
+  <form method="get" class="filter-form">
+    <select name="type" onchange="this.form.submit()">
+      <option value="" {% if not filter_type %}selected{% endif %}>All types</option>
+      <option value="character" {% if filter_type == 'character' %}selected{% endif %}>Character</option>
+      <option value="scene"     {% if filter_type == 'scene'     %}selected{% endif %}>Scene</option>
+    </select>
+    <select name="status" onchange="this.form.submit()">
+      <option value=""         {% if not filter_status             %}selected{% endif %}>All statuses</option>
+      <option value="approved" {% if filter_status == 'approved'   %}selected{% endif %}>Approved</option>
+      <option value="rejected" {% if filter_status == 'rejected'   %}selected{% endif %}>Rejected</option>
+    </select>
+  </form>
+</div>
+
+{% if not entries %}
+<div class="empty-state">No prompts found. <a href="/character">Generate one →</a></div>
+{% else %}
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Type</th>
+      <th>Subject</th>
+      <th>Timeline</th>
+      <th>Score</th>
+      <th>Status</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for e in entries %}
+    <tr>
+      <td class="mono muted small">{{ e.id }}</td>
+      <td>{{ e.type }}</td>
+      <td>{{ e.character or e.scene_id or '—' }}</td>
+      <td class="muted">{{ e.timeline|upper if e.timeline else '—' }}</td>
+      <td>
+        {% if e.review %}
+          <span class="{{ 'score-good' if e.review.overall >= 7 else ('score-bad' if e.review.overall < 5 else 'score-mid') }}">
+            {{ '%.1f'|format(e.review.overall) }}
+          </span>
+        {% else %}—{% endif %}
+      </td>
+      <td>
+        {% if e.approved %}<span class="badge badge-approved">approved</span>
+        {% elif e.rejected %}<span class="badge badge-rejected">rejected</span>
+        {% else %}<span class="badge badge-pending">unreviewed</span>{% endif %}
+      </td>
+      <td class="tbl-actions">
+        <a href="/review/{{ e.id }}">{% if e.review %}edit review{% else %}review{% endif %}</a>
+      </td>
+    </tr>
+    <tr class="prompt-preview-row">
+      <td colspan="7" class="prompt-preview">{{ e.prompt[:120] }}{% if e.prompt|length > 120 %}…{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% endblock %}

@@ -66,9 +66,11 @@ class PromptGenerator:
         if not match:
             return ''
         raw = match.group(1).strip()
-        # Strip fenced code block markers if present
-        raw = re.sub(r'^```[^\n]*\n?', '', raw)
-        raw = re.sub(r'\n?```$', '', raw)
+        # If the section contains a fenced code block, use only its contents —
+        # the surrounding prose is template instructions, not prompt material.
+        code_match = re.search(r'```[^\n]*\n(.*?)```', raw, re.DOTALL)
+        if code_match:
+            return code_match.group(1).strip()
         return raw.strip()
 
     def _pick_list(self, key: str) -> str:
