@@ -38,8 +38,9 @@
 </div>
 
 <div class="quick-actions">
-  <a href="/character" class="btn">Generate Character Prompt</a>
-  <a href="/scene" class="btn btn-ghost">Build Scene Prompt</a>
+  <a href="/studio" class="btn btn-lg">Studio — Reference → Image</a>
+  <a href="/character" class="btn btn-ghost">Character Prompt</a>
+  <a href="/scene" class="btn btn-ghost">Scene Prompt</a>
 </div>
 
 {% if recent %}
@@ -54,7 +55,7 @@
       <tr>
         <td class="mono muted">{{ e.id }}</td>
         <td>{{ e.type }}</td>
-        <td>{{ e.character or e.scene_id or '—' }}</td>
+        <td>{{ (e.character or e.scene_id or e.intent or '—')|truncate(28) }}</td>
         <td>
           {% if e.review %}
             {{ '%.1f'|format(e.review.overall) }}

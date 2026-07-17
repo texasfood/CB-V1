@@ -1,5 +1,6 @@
 """Cyan Black Codex — Flask web application."""
 
+import base64
 import os
 from pathlib import Path
 
@@ -13,9 +14,11 @@ from codex.prompt_generator import PromptGenerator
 from codex.review_engine import ReviewEngine, RUBRIC
 from codex.scene_builder import SceneBuilder
 from codex.prompt_log import PromptLog
+from codex import studio
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-only-key')
+app.config['MAX_CONTENT_LENGTH'] = 15 * 1024 * 1024  # 15 MB upload ceiling
 
 POSES = ['standing', 'body-shot', 'custom']
 TIMELINES = ['a', 'b']
@@ -52,6 +55,88 @@ def index():
         total_prompts=total,
         approved_prompts=approved,
         recent=recent,
+    )
+
+
+@app.route('/studio', methods=['GET', 'POST'])
+def studio_view():
+    state = _load()
+    characters = sorted(state.characters.keys())
+
+    result = None
+    error = None
+    form_data = {}
+
+    if request.method == 'POST':
+        form_data = request.form.to_dict()
+        name = form_data.get('name') or None
+        timeline = form_data.get('timeline', 'a')
+        aspect = form_data.get('format', 'portrait')
+        quality = form_data.get('quality', 'standard')
+        mood = form_data.get('mood') or None
+        intent = (form_data.get('intent') or '').strip()
+
+        if not intent:
+            error = 'Tell the Codex what you want in the image — one line is enough.'
+        else:
+            try:
+                ref_bytes = None
+                ref_data_url = None
+                upload = request.files.get('reference')
+                if upload and upload.filename:
+                    ref_bytes = studio.prep_image(upload)
+                    ref_data_url = 'data:image/png;base64,' + base64.b64encode(ref_bytes).decode()
+
+                client = studio._client()
+                context = studio.build_context(name, timeline)
+                written = studio.write_prompt(
+                    client, context, intent, name, timeline, aspect, mood, ref_data_url,
+                )
+                b64 = studio.generate_image(
+                    client, written['prompt'], aspect, quality, ref_bytes,
+                )
+                image_data_url = 'data:image/png;base64,' + b64
+
+                log = PromptLog()
+                eid = log.record(
+                    prompt_type='studio',
+                    prompt=written['prompt'],
+                    source_layers={
+                        'intent': intent,
+                        'character': name or 'unspecified',
+                        'timeline': timeline,
+                        'reference_used': bool(ref_bytes),
+                        'engine': studio.IMAGE_MODEL,
+                    },
+                    character=name,
+                    timeline=timeline,
+                    intent=intent,
+                )
+                studio.save_image(b64, eid)
+
+                result = {
+                    'id': eid,
+                    'image': image_data_url,
+                    'prompt': written['prompt'],
+                    'midjourney': written.get('midjourney', ''),
+                    'notes': written.get('notes', ''),
+                    'missing': written.get('missing_canon', []),
+                    'reference': ref_data_url,
+                }
+            except studio.StudioError as e:
+                error = str(e)
+            except Exception as e:
+                error = f'Something went wrong: {e}'
+
+    return render_template(
+        'studio.html',
+        characters=characters,
+        timelines=TIMELINES,
+        formats=FORMATS,
+        has_key=studio.has_key(),
+        result=result,
+        error=error,
+        form_data=form_data,
     )
 
 

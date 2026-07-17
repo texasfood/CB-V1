@@ -39,7 +39,7 @@
     <tr>
       <td class="mono muted small">{{ e.id }}</td>
       <td>{{ e.type }}</td>
-      <td>{{ e.character or e.scene_id or '—' }}</td>
+      <td>{{ (e.character or e.scene_id or e.intent or '—')|truncate(30) }}</td>
       <td class="muted">{{ e.timeline|upper if e.timeline else '—' }}</td>
       <td>
         {% if e.review %}

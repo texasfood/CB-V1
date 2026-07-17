@@ -11,6 +11,7 @@
     <div class="nav-inner">
       <a href="/" class="brand">CB·CODEX</a>
       <div class="nav-links">
+        <a href="/studio"    {% if request.path == '/studio'    %}class="active"{% endif %}>Studio</a>
         <a href="/character" {% if request.path == '/character' %}class="active"{% endif %}>Character</a>
         <a href="/scene"     {% if request.path == '/scene'     %}class="active"{% endif %}>Scene</a>
         <a href="/log"       {% if request.path.startswith('/log') or request.path.startswith('/review') %}class="active"{% endif %}>Log</a>

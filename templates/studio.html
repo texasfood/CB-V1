@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block title %}Studio{% endblock %}
+{% block content %}
+
+<h1>Studio — Reference → Image</h1>
+
+{% if not has_key %}
+<div class="alert alert-warn">
+  <div class="alert-label">⚠ OpenAI key not set</div>
+  Add <code>OPENAI_API_KEY</code> in your Render dashboard → Environment, then redeploy.
+  Until then the form will run but image generation will return an error.
+</div>
+{% endif %}
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" class="card" id="studio-form">
+
+  <div class="studio-top">
+    <label class="dropzone" id="dropzone">
+      <input type="file" name="reference" accept="image/png,image/jpeg,image/webp" id="reference" hidden>
+      <div class="dz-empty" id="dz-empty">
+        <div class="dz-icon">⌖</div>
+        <div class="dz-title">Drop a reference pic</div>
+        <div class="dz-sub">or click to browse — PNG, JPG, WebP (optional)</div>
+      </div>
+      <img class="dz-preview" id="dz-preview" alt="reference preview" hidden>
+    </label>
+
+    <div class="intent-col">
+      <div class="field field-full">
+        <label for="intent">What do you want in the shot?</label>
+        <textarea name="intent" id="intent" rows="4"
+          placeholder="e.g. James sprinting down the flooded corridor, looking back over his shoulder"
+          required>{{ form_data.get('intent', '') }}</textarea>
+      </div>
+      <p class="intent-hint">
+        One line is enough. The Codex reads your canon — world rules, {{ 'the dossiers' if characters else 'your files' }},
+        visual DNA, timeline — and writes the full prompt for you.
+      </p>
+    </div>
+  </div>
+
+  <div class="form-grid">
+    <div class="field">
+      <label>Character</label>
+      <select name="name">
+        <option value="">— from reference —</option>
+        {% for c in characters %}
+        <option value="{{ c }}" {% if form_data.get('name') == c %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label>Timeline</label>
+      <select name="timeline">
+        {% for t in timelines %}
+        <option value="{{ t }}" {% if form_data.get('timeline', 'a') == t %}selected{% endif %}>Timeline {{ t|upper }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label>Format</label>
+      <select name="format">
+        {% for f in formats %}
+        <option value="{{ f }}" {% if form_data.get('format', 'portrait') == f %}selected{% endif %}>{{ f }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label>Quality</label>
+      <select name="quality">
+        <option value="draft"    {% if form_data.get('quality') == 'draft'    %}selected{% endif %}>draft — cheapest</option>
+        <option value="standard" {% if form_data.get('quality', 'standard') == 'standard' %}selected{% endif %}>standard</option>
+        <option value="high"     {% if form_data.get('quality') == 'high'     %}selected{% endif %}>high — best</option>
+      </select>
+    </div>
+    <div class="field field-full">
+      <label>Mood override <span class="opt">(optional)</span></label>
+      <input type="text" name="mood" value="{{ form_data.get('mood', '') }}" placeholder="e.g. dread, resolve, grief">
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-lg" id="generate-btn">Generate Image</button>
+</form>
+
+<div class="gen-overlay" id="gen-overlay" hidden>
+  <div class="gen-inner">
+    <div class="spinner"></div>
+    <div class="gen-text">Reading canon, writing the prompt, rendering…</div>
+    <div class="gen-sub">This usually takes 20–45 seconds.</div>
+  </div>
+</div>
+
+{% if result %}
+<div class="result card">
+  <div class="result-header">
+    <h2 style="margin:0;">Result</h2>
+    <div class="result-meta mono muted">ID: {{ result.id }}</div>
+  </div>
+
+  <div class="image-wrap">
+    <img src="{{ result.image }}" alt="generated still" class="gen-image">
+  </div>
+
+  <div class="result-actions">
+    <a href="{{ result.image }}" download="cb_{{ result.id }}.png" class="btn">Download Image</a>
+    <a href="/review/{{ result.id }}" class="btn btn-ghost">Score this output</a>
+    <button class="btn btn-ghost" onclick="document.getElementById('studio-form').scrollIntoView({behavior:'smooth'})">Tweak &amp; regenerate</button>
+  </div>
+
+  {% if result.notes %}
+  <p class="gen-notes">{{ result.notes }}</p>
+  {% endif %}
+
+  {% if result.missing %}
+  <div class="alert alert-warn" style="margin-top:14px;">
+    <div class="alert-label">Canon gaps the Codex worked around</div>
+    <ul>{% for m in result.missing %}<li>{{ m }}</li>{% endfor %}</ul>
+    Fill these in for tighter fidelity next time.
+  </div>
+  {% endif %}
+
+  <div class="prompt-section">
+    <h2>Prompt the Codex wrote</h2>
+    <div class="prompt-box" id="prompt-out">{{ result.prompt }}</div>
+    <div class="result-actions">
+      <button class="btn btn-ghost btn-sm" id="prompt-out-btn" onclick="copyPrompt('prompt-out')">Copy Prompt</button>
+    </div>
+  </div>
+
+  {% if result.midjourney %}
+  <details class="sources">
+    <summary>MidJourney-formatted version</summary>
+    <div class="prompt-box" id="mj-out" style="margin-top:10px;">{{ result.midjourney }}</div>
+    <div class="result-actions">
+      <button class="btn btn-ghost btn-sm" id="mj-out-btn" onclick="copyPrompt('mj-out')">Copy for MidJourney</button>
+    </div>
+  </details>
+  {% endif %}
+</div>
+{% endif %}
+
+<script>
+  // Reference image preview
+  const refInput = document.getElementById('reference');
+  const dz = document.getElementById('dropzone');
+  const dzEmpty = document.getElementById('dz-empty');
+  const dzPreview = document.getElementById('dz-preview');
+
+  function showPreview(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      dzPreview.src = e.target.result;
+      dzPreview.hidden = false;
+      dzEmpty.hidden = true;
+      dz.classList.add('has-image');
+    };
+    reader.readAsDataURL(file);
+  }
+  refInput.addEventListener('change', () => showPreview(refInput.files[0]));
+
+  ['dragover', 'dragenter'].forEach(ev =>
+    dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('dragging'); }));
+  ['dragleave', 'drop'].forEach(ev =>
+    dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('dragging'); }));
+  dz.addEventListener('drop', e => {
+    const file = e.dataTransfer.files[0];
+    if (file) { refInput.files = e.dataTransfer.files; showPreview(file); }
+  });
+
+  // Loading overlay on submit
+  document.getElementById('studio-form').addEventListener('submit', () => {
+    const intent = document.getElementById('intent').value.trim();
+    if (!intent) return;
+    document.getElementById('gen-overlay').hidden = false;
+    document.getElementById('generate-btn').disabled = true;
+    document.getElementById('generate-btn').textContent = 'Generating…';
+  });
+</script>
+
+{% endblock %}
